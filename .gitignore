@@ -19,6 +19,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env.local
 .env
 
 # typescript
@@ -26,4 +27,15 @@ yarn-error.log*
 next-env.d.ts
 
 # vercel
-.vercel
+.vercel/
+.idea/
+
+# Supabase
+.supabase
+
+# Coverage
+coverage/
+
+# TypeScript
+*.tsbuildinfo
+
