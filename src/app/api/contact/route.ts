@@ -6,27 +6,45 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { servicesNeededOptions, budgetOptions, timelineOptions } from "@/lib/data";
 import { templateFilterCategories } from "@/lib/templates";
 import { siteConfig } from "@/lib/site-config";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
- * Project inquiry endpoint — validates a contact form submission and,
- * once configured, emails it to the business inbox via Resend (see
+ * Project inquiry endpoint — validates a contact form submission, stores it
+ * in Supabase (lead + lead_inquiry + activity_log, via the
+ * create_contact_inquiry database function — see
+ * supabase/migrations/20260804090000_create_contact_inquiry_function.sql),
+ * and, once configured, emails it to the business inbox via Resend (see
  * `.env.example` for the required environment variables).
+ *
+ * Two independent things can be "not configured yet," and they're handled
+ * differently on purpose:
+ * - Supabase (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SECRET_KEY) missing or
+ *   the database write failing is a hard failure — the inquiry was not
+ *   captured anywhere, so this returns an error and sends no emails.
+ * - Resend (EMAIL_API_KEY / EMAIL_FROM) missing is "demo mode": the lead is
+ *   still saved for real, just not emailed, and the client is told this
+ *   honestly. This is a change from the previous phase, where demo mode
+ *   skipped everything (there was nothing to save yet); see the Phase 8
+ *   report for the full reasoning.
  *
  * Email provider: Resend (https://resend.com). Chosen because it has a
  * first-party Next.js App Router integration, a straightforward TypeScript
  * SDK, and a free tier that comfortably covers a small business's inquiry
  * volume. Swapping providers later only requires changing the `sendEmail`
  * calls below — nothing in the UI or `src/lib/inquiry.ts` needs to change.
- *
- * Currently in "demo mode" until `EMAIL_API_KEY` and `EMAIL_FROM` are both
- * set: submissions are still validated, rate-limited, and logged, but no
- * email is sent, and the client is told honestly that this happened.
  */
 
 const MAX_BODY_BYTES = 20_000; // generous for this form; blocks abusive oversized payloads
 const MAX_FIELD_LENGTH = 200;
 const MAX_MESSAGE_LENGTH = 5000;
 const RATE_LIMIT = { limit: 5, windowMs: 10 * 60 * 1000 }; // 5 submissions / 10 minutes / IP
+
+/** Shape of the single row returned by the create_contact_inquiry() RPC call. */
+interface CreateContactInquiryResult {
+  lead_id: string;
+  inquiry_id: string;
+  is_new_lead: boolean;
+}
 
 const businessTypeOptions = templateFilterCategories.filter((category) => category !== "All") as readonly string[];
 
@@ -140,17 +158,89 @@ export async function POST(request: Request) {
   const payload = body as InquiryPayload;
   const submittedAt = new Date();
 
+  // --- 6. Atomic database operation -----------------------------------------
+  // The database write is the source of truth for "was this inquiry
+  // captured" — it happens before any email is attempted, and unlike the
+  // two best-effort email sends below, a failure here is fatal to the
+  // request: no email is sent, and the client is never told the inquiry
+  // succeeded. See src/lib/supabase/admin.ts and
+  // supabase/migrations/20260804090000_create_contact_inquiry_function.sql.
+  let admin: ReturnType<typeof createAdminClient>;
+  try {
+    admin = createAdminClient();
+  } catch (error) {
+    console.error("[contact] Supabase admin client is not configured:", error);
+    if (process.env.NODE_ENV !== "production") {
+      // Safe to be specific here — only reachable by whoever is running
+      // the app locally, and names an env var, never a value.
+      return NextResponse.json(
+        { ok: false, error: "Supabase isn't configured for the contact form yet. See docs/supabase-setup.md." },
+        { status: 500 },
+      );
+    }
+    return NextResponse.json(
+      { ok: false, error: "We couldn't submit your inquiry right now. Please try again shortly." },
+      { status: 503 },
+    );
+  }
+
+  let dbResult: CreateContactInquiryResult;
+  try {
+    const { data, error } = await admin.rpc("create_contact_inquiry", {
+      p_name: payload.name.trim(),
+      p_email: payload.email.trim(),
+      p_business_name: payload.businessName.trim(),
+      p_phone: payload.phone.trim(),
+      p_website: payload.website.trim(),
+      p_business_type: payload.businessType,
+      p_services_requested: payload.servicesNeeded,
+      p_budget_range: payload.budget,
+      p_timeline: payload.timeline,
+      p_message: payload.message.trim(),
+    });
+
+    if (error || !data || data.length === 0) {
+      // Safe, minimal detail in every environment (operation name, no PII);
+      // the Postgres error code/message/hint — never row data — only in
+      // development, to help debugging without risking exposing internals
+      // if this ever ran with NODE_ENV unset in a real deployment.
+      console.error("[contact] create_contact_inquiry failed");
+      if (process.env.NODE_ENV !== "production") {
+        console.error("[contact] create_contact_inquiry error detail:", {
+          message: error?.message,
+          code: error?.code,
+          details: error?.details,
+          hint: error?.hint,
+        });
+      }
+      return NextResponse.json(
+        { ok: false, error: "We couldn't submit your inquiry right now. Please try again shortly." },
+        { status: 502 },
+      );
+    }
+
+    dbResult = data[0] as CreateContactInquiryResult;
+  } catch (error) {
+    console.error("[contact] Network error calling create_contact_inquiry:", process.env.NODE_ENV !== "production" ? error : "(see server logs)");
+    return NextResponse.json(
+      { ok: false, error: "We couldn't submit your inquiry right now. Please try again shortly." },
+      { status: 502 },
+    );
+  }
+
+  // --- 7. Admin notification email (best-effort) -----------------------------
+  // The inquiry is already safely stored as of step 6 — a failure sending
+  // this notification is an operational problem to follow up on, not a
+  // reason to tell the visitor their submission failed (it didn't).
   const apiKey = process.env.EMAIL_API_KEY;
   const emailFrom = process.env.EMAIL_FROM;
   const contactEmail = process.env.CONTACT_EMAIL || siteConfig.contact.email;
 
   if (!apiKey || !emailFrom) {
-    // Demo mode — no email provider is configured yet.
-    console.log("[contact] Demo mode — inquiry received but not emailed:", {
-      name: payload.name,
-      businessName: payload.businessName,
-      email: payload.email,
-    });
+    // Email demo mode — the lead/inquiry above was still saved for real.
+    console.log(
+      `[contact] Email not configured — lead ${dbResult.lead_id} (inquiry ${dbResult.inquiry_id}) saved, no email sent.`,
+    );
     return NextResponse.json({ ok: true, demo: true });
   }
 
@@ -166,27 +256,14 @@ export async function POST(request: Request) {
       html: leadEmail.html,
       text: leadEmail.text,
     });
-
     if (error) {
-      console.error("[contact] Failed to send lead notification email:", error);
-      return NextResponse.json(
-        { ok: false, error: "We couldn't submit your inquiry right now. Please try again shortly." },
-        { status: 502 },
-      );
+      console.error(`[contact] Failed to send lead notification email for lead ${dbResult.lead_id}:`, error);
     }
   } catch (error) {
-    console.error("[contact] Network error sending lead notification email:", error);
-    return NextResponse.json(
-      { ok: false, error: "We couldn't submit your inquiry right now. Please try again shortly." },
-      { status: 502 },
-    );
+    console.error(`[contact] Network error sending lead notification email for lead ${dbResult.lead_id}:`, error);
   }
 
-  // --- 6. Customer auto-reply (optional / best-effort) ----------------------
-  // The lead notification above is the critical email — if it succeeded,
-  // the inquiry has been captured. A failure sending this confirmation
-  // shouldn't fail the whole request, so it's logged rather than returned
-  // as an error to the visitor.
+  // --- 8. Customer auto-reply (best-effort) -----------------------------------
   try {
     const autoReply = buildCustomerAutoReplyEmail(payload);
     const { error } = await resend.emails.send({
@@ -198,11 +275,12 @@ export async function POST(request: Request) {
       text: autoReply.text,
     });
     if (error) {
-      console.error("[contact] Failed to send customer auto-reply:", error);
+      console.error(`[contact] Failed to send customer auto-reply for lead ${dbResult.lead_id}:`, error);
     }
   } catch (error) {
-    console.error("[contact] Network error sending customer auto-reply:", error);
+    console.error(`[contact] Network error sending customer auto-reply for lead ${dbResult.lead_id}:`, error);
   }
 
+  // --- 9. Success --------------------------------------------------------------
   return NextResponse.json({ ok: true, demo: false });
 }

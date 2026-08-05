@@ -56,7 +56,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     label: "Work",
     items: [
       { label: "Dashboard", href: "/admin", icon: IconGrid },
-      { label: "Leads", icon: IconInbox },
+      { label: "Leads", href: "/admin/leads", icon: IconInbox },
       { label: "Follow-ups", icon: IconClock },
       { label: "Clients", icon: IconUsers },
       { label: "Projects", icon: IconBriefcase },
@@ -98,6 +98,8 @@ export interface DemoAttentionItem {
   detail: string;
   meta: string;
   actionLabel: string;
+  /** When set, the action button navigates here instead of rendering as an inert button. */
+  href?: string;
 }
 
 export const demoNeedsAttention: DemoAttentionItem[] = [
@@ -323,6 +325,8 @@ export interface DemoActivityItem {
   business?: string;
   timestamp: string;
   icon: ComponentType<IconProps>;
+  /** When set, the row links here. */
+  href?: string;
 }
 
 export const demoRecentActivity: DemoActivityItem[] = [

@@ -40,7 +40,7 @@ Copy `.env.example` to `.env.local` and fill in values as they become available.
 | `NEXT_PUBLIC_GA_ID` | Analytics | GA4 Measurement ID (`G-XXXXXXXXXX`). Analytics doesn't load if unset. |
 | `NEXT_PUBLIC_SUPABASE_URL` | `/admin` login | Public. See [`docs/supabase-setup.md`](docs/supabase-setup.md). |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | `/admin` login | Public, RLS-restricted. |
-| `SUPABASE_SECRET_KEY` | *(not used yet)* | Server-only, secret. Documented ahead of the phase that connects the contact form to the database. |
+| `SUPABASE_SECRET_KEY` | Contact form → CRM | Server-only, secret. Used by `src/lib/supabase/admin.ts` to store contact form submissions. |
 
 ## Admin backend (Supabase)
 
@@ -84,7 +84,7 @@ src/
     seo.ts                   Shared metadata builder
     analytics.ts             Google Analytics event helper
     admin-demo-data.ts       Dashboard demo data — see docs/supabase-setup.md for the real-data migration path
-    supabase/                Browser + server Supabase client utilities
+    supabase/                Browser + server (RLS) + server-only admin (service role) Supabase client utilities
 ```
 
 ## Editing content
@@ -142,6 +142,7 @@ Not attempted yet since the final domain isn't connected. Once it is:
 
 - [ ] Follow [`docs/supabase-setup.md`](docs/supabase-setup.md) end to end: create the project, set the three `SUPABASE_*`/`NEXT_PUBLIC_SUPABASE_*` env vars, run the migrations in `supabase/migrations/`, create your first admin user, and promote it to `owner`.
 - [ ] Confirm `/admin/login` works, `/admin` redirects to it when signed out, and Logout in the sidebar works.
+- [ ] Submit a real test inquiry through the public contact form and confirm a `leads` row, a `lead_inquiries` row, and an `activity_log` row were created (see `docs/supabase-setup.md` §7 / `docs/testing-contact-inquiry.md`).
 - [ ] Note: the dashboard itself still shows demo data as of this phase — connecting it to real leads/clients/projects is a separate, later phase.
 
 ### 6. Business information

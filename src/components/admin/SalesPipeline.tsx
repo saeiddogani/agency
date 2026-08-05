@@ -1,11 +1,12 @@
 import { PipelineCard } from "@/components/admin/PipelineCard";
-import { demoLeads, pipelineStages } from "@/lib/admin-demo-data";
+import { pipelineStages, type DemoLead } from "@/lib/admin-demo-data";
 
-export function SalesPipeline() {
+/** Real leads as of Phase 9 — see getPipelineLeads() and mapLeadsToPipeline(). */
+export function SalesPipeline({ leads: allLeads }: { leads: DemoLead[] }) {
   return (
     <div className="-mx-1 flex gap-4 overflow-x-auto px-1 pb-2">
       {pipelineStages.map((stage) => {
-        const leads = demoLeads.filter((lead) => lead.stage === stage);
+        const leads = allLeads.filter((lead) => lead.stage === stage);
         return (
           <div key={stage} className="flex w-64 shrink-0 flex-col gap-3">
             <div className="flex items-baseline justify-between px-1">

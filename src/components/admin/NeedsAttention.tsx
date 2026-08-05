@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import { IconAlertCircle, IconClock, IconFileText, IconBriefcase, type IconProps } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/admin/EmptyState";
-import { demoNeedsAttention, type AttentionKind } from "@/lib/admin-demo-data";
+import type { AttentionKind, DemoAttentionItem } from "@/lib/admin-demo-data";
 
 const kindConfig: Record<
   AttentionKind,
@@ -14,14 +14,20 @@ const kindConfig: Record<
   deadline: { icon: IconBriefcase, iconClass: "bg-brand-50 text-brand-600", metaClass: "text-brand-600", barClass: "bg-brand-500" },
 };
 
-export function NeedsAttention() {
-  if (demoNeedsAttention.length === 0) {
+/**
+ * As of Phase 9, `items` is real data (leads needing first contact — see
+ * getNeedsAttentionLeads()), not demo data. Prop-driven now instead of
+ * importing demoNeedsAttention directly, specifically so the page decides
+ * where the data comes from and this component stays a pure renderer.
+ */
+export function NeedsAttention({ items }: { items: DemoAttentionItem[] }) {
+  if (items.length === 0) {
     return <EmptyState title="You're all caught up." message="Nothing needs your attention right now." />;
   }
 
   return (
     <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-      {demoNeedsAttention.map((item) => {
+      {items.map((item) => {
         const config = kindConfig[item.kind];
         return (
           <div
@@ -41,9 +47,15 @@ export function NeedsAttention() {
                   <p className={`mt-1 text-xs font-medium ${config.metaClass}`}>{item.meta}</p>
                 </div>
               </div>
-              <Button variant="outline" size="md" className="shrink-0 self-start sm:self-center">
-                {item.actionLabel}
-              </Button>
+              {item.href ? (
+                <Button href={item.href} variant="outline" size="md" className="shrink-0 self-start sm:self-center">
+                  {item.actionLabel}
+                </Button>
+              ) : (
+                <Button variant="outline" size="md" className="shrink-0 self-start sm:self-center">
+                  {item.actionLabel}
+                </Button>
+              )}
             </div>
           </div>
         );
