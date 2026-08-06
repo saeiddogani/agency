@@ -7,7 +7,7 @@ import { IconArrowRight } from "@/components/icons";
 
 export function TemplatesPreview() {
   return (
-    <section className="border-t border-ink-200 bg-surface-alt py-20 lg:py-28" aria-labelledby="templates-heading">
+    <section className="border-t border-ink-200/60 bg-surface-alt py-20 lg:py-28" aria-labelledby="templates-heading">
       <Container className="flex flex-col gap-12">
         <SectionHeading
           id="templates-heading"

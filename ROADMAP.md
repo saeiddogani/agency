@@ -30,24 +30,30 @@ Supabase + Authentication
 
 ---
 
-## 🚧 Phase 8
+## ✅ Phase 8
 
 Connect Contact Form to CRM
 
 - ✅ Store Lead
 - ✅ Store Lead Inquiry
 - ✅ Activity Log
-- ⏳ Dashboard Notification — deferred to Phase 9 on purpose. The approved Phase 8 scope was explicitly contact-form-to-database only ("do NOT connect the dashboard to real data yet"); the dashboard still reads from `src/lib/admin-demo-data.ts`. Real activity is captured in `activity_log` and ready to read from once Phase 9 wires the dashboard to it.
+- ✅ Dashboard Notification — done in Phase 9 (Recent Activity now reads real `activity_log` rows).
 
 ---
 
-## Phase 9
+## ✅ Phase 9
 
-Lead Management
+Read-Only CRM — Leads list/detail pages, and the dashboard connected to real Supabase data.
+
+- ✅ `/admin/leads` — search, filter, sort, pagination
+- ✅ `/admin/leads/[id]` — contact/business info, requested services, inquiry timeline, activity timeline
+- ✅ Dashboard connected to real data, then simplified to three sections (Needs Attention, Recent Leads, Recent Activity) — see `CHANGELOG.md` "Dashboard Simplification"
+
+---
 
 ## Phase 10
 
-Follow-ups
+Lead Management (editing, assignment, notes) + Follow-ups
 
 ## Phase 11
 

@@ -4,8 +4,11 @@ import type { TemplateDefinition } from "@/lib/templates";
 
 export function TemplateCard({ slug, name, category, description, accent }: TemplateDefinition) {
   return (
-    <div className="flex flex-col gap-4">
-      <BrowserMockup label={`${name.toLowerCase().replace(/\s+/g, "")}.example`}>
+    <div className="group flex flex-col gap-4">
+      <BrowserMockup
+        label={`${name.toLowerCase().replace(/\s+/g, "")}.example`}
+        className="transition-[border-color,box-shadow] duration-200 ease-out group-hover:border-ink-300/80 group-hover:shadow-[0_1px_1px_rgba(16,21,29,0.04),0_28px_56px_-24px_rgba(16,21,29,0.28)]"
+      >
         <div
           className="flex flex-col gap-2 p-4"
           style={{ backgroundColor: `${accent}0d` }}

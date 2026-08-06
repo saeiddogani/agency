@@ -22,9 +22,9 @@ export function SectionHeading({
   const alignment = align === "center" ? "items-center text-center mx-auto" : "items-start text-left";
 
   return (
-    <div className={`flex flex-col gap-4 ${alignment} ${className}`}>
+    <div className={`flex flex-col ${alignment} ${className}`}>
       {eyebrow ? (
-        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">
+        <span className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">
           {eyebrow}
         </span>
       ) : null}
@@ -32,7 +32,7 @@ export function SectionHeading({
         {title}
       </Heading>
       {description ? (
-        <p className="max-w-xl text-base text-ink-500 sm:text-lg">{description}</p>
+        <p className="mt-4 max-w-xl text-base text-ink-500 sm:text-lg">{description}</p>
       ) : null}
     </div>
   );

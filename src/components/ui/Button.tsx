@@ -14,12 +14,14 @@ type ButtonSize = "md" | "lg";
  * section background.
  */
 const baseStyles =
-  "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors duration-150 disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-[color,background-color,border-color,box-shadow] duration-200 ease-out disabled:opacity-50 disabled:pointer-events-none";
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: "bg-brand-600 text-white hover:bg-brand-700",
-  secondary: "bg-ink-900 text-white hover:bg-ink-800",
-  outline: "border border-ink-300 text-ink-900 hover:border-ink-900 bg-transparent",
+  primary:
+    "bg-brand-600 text-white shadow-[0_1px_2px_rgba(16,21,29,0.06),0_1px_1px_rgba(31,74,140,0.3)] hover:bg-brand-700 hover:shadow-[0_6px_16px_-4px_rgba(31,74,140,0.45)]",
+  secondary:
+    "bg-ink-900 text-white shadow-[0_1px_2px_rgba(16,21,29,0.08)] hover:bg-ink-800 hover:shadow-[0_6px_16px_-4px_rgba(16,21,29,0.3)]",
+  outline: "border border-ink-300 text-ink-900 bg-transparent hover:border-ink-900 hover:bg-ink-900/[0.04]",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {

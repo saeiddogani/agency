@@ -47,8 +47,6 @@ export const mainNavLinks = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
   { label: "Templates", href: "/templates" },
-  { label: "Portfolio", href: "/portfolio" },
-  { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
 ] as const;
 
@@ -56,8 +54,6 @@ export const footerNavLinks = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
   { label: "Templates", href: "/templates" },
-  { label: "Portfolio", href: "/portfolio" },
-  { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ] as const;

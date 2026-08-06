@@ -16,8 +16,8 @@ export function FinalCta({
   buttonHref = "/contact",
 }: FinalCtaProps) {
   return (
-    <section className="bg-ink-950 py-20 lg:py-24">
-      <Container className="flex flex-col items-center gap-6 text-center">
+    <section className="border-t border-ink-900 bg-ink-950 py-20 lg:py-28">
+      <Container className="flex flex-col items-center gap-7 text-center">
         <h2 className="text-balance max-w-2xl text-white">{heading}</h2>
         <p className="max-w-lg text-lg text-ink-300">{text}</p>
         <Button

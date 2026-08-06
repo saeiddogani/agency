@@ -10,7 +10,6 @@ import type {
   LeadsListParams,
   LeadsListResult,
   LeadStatus,
-  LeadStatusCounts,
 } from "@/lib/admin/types";
 
 /**
@@ -37,31 +36,6 @@ export const businessTypeOptions = templateFilterCategories.filter((category) =>
 
 /** Every lead created via the contact form has source = 'contact_form' today (see the create_contact_inquiry function) — this list exists so the filter UI is ready for future sources without a schema change. */
 export const sourceOptions = ["contact_form"];
-
-/**
- * Dashboard status-count cards (New/Contacted/Qualified/Proposal/Won/Lost/
- * Total Active). One lightweight query — just the two columns needed —
- * rather than 6 separate `count: "exact"` queries.
- */
-export async function getLeadStatusCounts(): Promise<LeadStatusCounts> {
-  const supabase = await createClient();
-  const { data, error } = await supabase.from("leads").select("status, archived_at");
-
-  if (error) {
-    console.error("[admin] getLeadStatusCounts failed:", error.message);
-    return { new: 0, contacted: 0, qualified: 0, proposal: 0, won: 0, lost: 0, totalActive: 0 };
-  }
-
-  const counts: LeadStatusCounts = { new: 0, contacted: 0, qualified: 0, proposal: 0, won: 0, lost: 0, totalActive: 0 };
-  for (const row of data ?? []) {
-    const status = row.status as LeadStatus;
-    counts[status] += 1;
-    if (status !== "won" && status !== "lost" && !row.archived_at) {
-      counts.totalActive += 1;
-    }
-  }
-  return counts;
-}
 
 /** Most recently created leads, for the dashboard's "Recent Leads" section. */
 export async function getRecentLeads(limit = 6): Promise<LeadRow[]> {
@@ -124,29 +98,6 @@ export async function getNeedsAttentionLeads(limit = 6): Promise<LeadRow[]> {
 
   if (error) {
     console.error("[admin] getNeedsAttentionLeads failed:", error.message);
-    return [];
-  }
-  return (data ?? []) as LeadRow[];
-}
-
-/**
- * Leads grouped by pipeline stage for the dashboard's Sales Pipeline
- * kanban — only open, non-archived leads (won/lost leads have their own
- * meaning already covered by the status-count cards, and archived leads
- * are hidden by design everywhere in the admin, same as the rest of the
- * approved architecture).
- */
-export async function getPipelineLeads(): Promise<LeadRow[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("leads")
-    .select("*")
-    .is("archived_at", null)
-    .in("status", ["new", "contacted", "qualified", "proposal", "won"])
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("[admin] getPipelineLeads failed:", error.message);
     return [];
   }
   return (data ?? []) as LeadRow[];

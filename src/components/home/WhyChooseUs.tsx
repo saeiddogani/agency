@@ -13,7 +13,7 @@ export function WhyChooseUs() {
           description="We combine strong design fundamentals with a process that keeps things simple for you."
         />
 
-        <div className="grid grid-cols-1 divide-y divide-ink-200 border-t border-ink-200 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-3">
+        <div className="grid grid-cols-1 divide-y divide-ink-200/70 border-t border-ink-200/70 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-3">
           {whyChooseUs.map(({ title, description, icon: Icon }, index) => (
             <div key={title} className="flex flex-col gap-4 px-0 py-8 sm:px-8 sm:first:pl-0">
               <div className="flex items-center justify-between">

@@ -5,7 +5,7 @@ import type { DemoActivityItem } from "@/lib/admin-demo-data";
 /** Real data as of Phase 9 (activity_log rows) — see getRecentActivity() and mapActivityToItems(). */
 export function RecentActivity({ items }: { items: DemoActivityItem[] }) {
   if (items.length === 0) {
-    return <EmptyState title="No recent activity yet." message="Activity will show up here as things happen." />;
+    return <EmptyState title="No recent activity." message="Activity will show up here as things happen." />;
   }
 
   return (

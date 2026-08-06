@@ -5,7 +5,7 @@ import { processSteps } from "@/lib/data";
 
 export function Process() {
   return (
-    <section className="border-t border-ink-200 bg-surface-alt py-20 lg:py-28" aria-labelledby="process-heading">
+    <section className="border-t border-ink-200/60 bg-surface-alt py-20 lg:py-28" aria-labelledby="process-heading">
       <Container className="flex flex-col gap-12">
         <SectionHeading
           id="process-heading"

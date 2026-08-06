@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
-import { Hero } from "@/components/home/Hero";
+import { HeroCarousel } from "@/components/home/HeroCarousel";
 import { TrustBar } from "@/components/home/TrustBar";
 import { ServicesPreview } from "@/components/home/ServicesPreview";
 import { TemplatesPreview } from "@/components/home/TemplatesPreview";
 import { WhyChooseUs } from "@/components/home/WhyChooseUs";
 import { Process } from "@/components/home/Process";
-import { Portfolio } from "@/components/home/Portfolio";
-import { PricingPreview } from "@/components/home/PricingPreview";
-import { Testimonials } from "@/components/home/Testimonials";
 import { FinalCta } from "@/components/home/FinalCta";
 import { siteConfig } from "@/lib/site-config";
 import { buildMetadata } from "@/lib/seo";
@@ -21,15 +18,12 @@ export const metadata: Metadata = buildMetadata({ title, description, path: "/" 
 export default function Home() {
   return (
     <>
-      <Hero />
+      <HeroCarousel />
       <TrustBar />
       <ServicesPreview />
       <TemplatesPreview />
       <WhyChooseUs />
       <Process />
-      <Portfolio />
-      <PricingPreview />
-      <Testimonials />
       <FinalCta />
     </>
   );
