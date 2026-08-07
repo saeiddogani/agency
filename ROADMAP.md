@@ -51,6 +51,17 @@ Read-Only CRM — Leads list/detail pages, and the dashboard connected to real S
 
 ---
 
+## ✅ Phase 10A / 10B — Homepage Visual & Motion Polish
+
+A side-track from the CRM roadmap below (numbered separately — "10A/10B" to
+avoid colliding with CRM "Phase 10"): a two-part visual refresh of the
+public homepage only.
+
+- ✅ 10A — shadows, borders, card depth, browser-mockup styling, spacing/typography rhythm, section background rhythm.
+- ✅ 10B — motion & micro-interactions: hero entrance, header scroll polish, mobile menu animation, scroll-triggered section reveals, card/button/browser-mockup hover interactions. See `CHANGELOG.md` "Phase 10B" for full detail. Homepage only — not yet extended to other public pages.
+
+---
+
 ## Phase 10
 
 Lead Management (editing, assignment, notes) + Follow-ups

@@ -1,16 +1,17 @@
 import { BrowserMockup } from "@/components/ui/BrowserMockup";
 import { Button } from "@/components/ui/Button";
+import { IconArrowRight } from "@/components/icons";
 import type { TemplateDefinition } from "@/lib/templates";
 
 export function TemplateCard({ slug, name, category, description, accent }: TemplateDefinition) {
   return (
-    <div className="group flex flex-col gap-4">
+    <div className="group flex flex-col gap-4 transition-transform duration-200 ease-out hover:-translate-y-1 motion-reduce:hover:translate-y-0">
       <BrowserMockup
         label={`${name.toLowerCase().replace(/\s+/g, "")}.example`}
         className="transition-[border-color,box-shadow] duration-200 ease-out group-hover:border-ink-300/80 group-hover:shadow-[0_1px_1px_rgba(16,21,29,0.04),0_28px_56px_-24px_rgba(16,21,29,0.28)]"
       >
         <div
-          className="flex flex-col gap-2 p-4"
+          className="flex flex-col gap-2 p-4 transition-transform duration-300 ease-out group-hover:scale-[1.03] motion-reduce:group-hover:scale-100"
           style={{ backgroundColor: `${accent}0d` }}
           role="img"
           aria-label={`Preview mockup of a ${name.toLowerCase()} website template`}
@@ -44,6 +45,7 @@ export function TemplateCard({ slug, name, category, description, accent }: Temp
 
       <Button href={`/templates/${slug}`} variant="outline" size="md" className="w-fit">
         View Demo
+        <IconArrowRight className="h-4 w-4 transition-transform duration-200 ease-out group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0" />
       </Button>
     </div>
   );

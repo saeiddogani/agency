@@ -24,38 +24,32 @@ export interface Service {
 export const services: Service[] = [
   {
     title: "Website Design",
-    description:
-      "Custom, modern designs tailored to your brand — built to earn trust the moment a visitor lands on your site.",
+    description: "A custom, modern design that earns trust the moment someone lands on your site.",
     icon: IconPalette,
   },
   {
     title: "Website Development",
-    description:
-      "Fast, reliable websites built with modern tools, coded cleanly so they're easy to grow and maintain.",
+    description: "A fast, reliable website that keeps running smoothly — and is easy to grow as your business does.",
     icon: IconCode,
   },
   {
     title: "SEO",
-    description:
-      "On-page and technical SEO foundations that help local customers find your business on Google.",
+    description: "SEO foundations that help local customers find you on Google before they find your competitors.",
     icon: IconSearch,
   },
   {
     title: "Website Maintenance",
-    description:
-      "Ongoing updates, monitoring, and support so your site stays secure, current, and running smoothly.",
+    description: "Ongoing updates and monitoring, so your site stays secure and never becomes an afterthought.",
     icon: IconWrench,
   },
   {
     title: "Hosting",
-    description:
-      "Managed, secure hosting with strong performance — no technical setup required on your end.",
+    description: "Managed, secure hosting with strong performance — no technical setup required on your end.",
     icon: IconServer,
   },
   {
     title: "Landing Pages",
-    description:
-      "Focused, high-converting pages for campaigns, promotions, and new service launches.",
+    description: "Focused, high-converting pages for campaigns, promotions, and new service launches.",
     icon: IconLayout,
   },
 ];
@@ -164,10 +158,10 @@ export const serviceDetails: ServiceDetail[] = [
 ];
 
 export const trustPoints: { title: string; icon: ComponentType<IconProps> }[] = [
-  { title: "Modern Design", icon: IconPalette },
-  { title: "Mobile Friendly", icon: IconSmartphone },
-  { title: "Fast Performance", icon: IconZap },
-  { title: "SEO Ready", icon: IconSearch },
+  { title: "Live in 2–4 Weeks", icon: IconZap },
+  { title: "No Tech Skills Needed", icon: IconLayers },
+  { title: "Mobile-Friendly by Default", icon: IconSmartphone },
+  { title: "Built to Rank on Google", icon: IconSearch },
 ];
 
 export interface WhyPoint {
@@ -184,12 +178,12 @@ export const whyChooseUs: WhyPoint[] = [
   },
   {
     title: "Mobile-first",
-    description: "Most of your visitors are on their phones. We design for that reality first.",
+    description: "Most of your customers will find you on their phone first. We design for that, not for it.",
     icon: IconSmartphone,
   },
   {
     title: "Fast loading",
-    description: "Lean, optimized builds so pages load quickly and visitors don't bounce.",
+    description: "Every second of load time costs you visitors — we build lean so pages load quickly.",
     icon: IconZap,
   },
   {
@@ -199,12 +193,12 @@ export const whyChooseUs: WhyPoint[] = [
   },
   {
     title: "Easy to manage",
-    description: "Straightforward handoff and support, so updates don't require a developer.",
+    description: "Straightforward handoff and support, so updates never mean waiting on a developer.",
     icon: IconLayers,
   },
   {
     title: "Built to convert",
-    description: "Every page is structured to turn visitors into calls, bookings, and customers.",
+    description: "Every page is structured to turn visitors into calls, bookings, and paying customers.",
     icon: IconShieldCheck,
   },
 ];
@@ -247,7 +241,7 @@ export const processSteps: ProcessStepData[] = [
   {
     number: "01",
     title: "Tell Us About Your Business",
-    description: "We start with a short conversation about your business, your goals, and your customers.",
+    description: "A short conversation about your business, your goals, and the customers you want to reach.",
   },
   {
     number: "02",
@@ -257,12 +251,12 @@ export const processSteps: ProcessStepData[] = [
   {
     number: "03",
     title: "We Build Your Website",
-    description: "We handle the design, content layout, and development while you focus on your business.",
+    description: "We handle the design, content layout, and development — you focus on running your business.",
   },
   {
     number: "04",
     title: "Launch & Grow",
-    description: "Your site goes live, and we help you maintain and grow it over time.",
+    description: "Your site goes live, ready to bring in customers, with support to help it keep growing.",
   },
 ];
 

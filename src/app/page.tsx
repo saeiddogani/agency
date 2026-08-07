@@ -6,6 +6,7 @@ import { TemplatesPreview } from "@/components/home/TemplatesPreview";
 import { WhyChooseUs } from "@/components/home/WhyChooseUs";
 import { Process } from "@/components/home/Process";
 import { FinalCta } from "@/components/home/FinalCta";
+import { FadeUp } from "@/components/motion/FadeUp";
 import { siteConfig } from "@/lib/site-config";
 import { buildMetadata } from "@/lib/seo";
 
@@ -24,7 +25,9 @@ export default function Home() {
       <TemplatesPreview />
       <WhyChooseUs />
       <Process />
-      <FinalCta />
+      <FadeUp>
+        <FinalCta />
+      </FadeUp>
     </>
   );
 }

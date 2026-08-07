@@ -1,13 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { BrowserMockup } from "@/components/ui/BrowserMockup";
+import { FadeUp } from "@/components/motion/FadeUp";
+import { DURATION, EASE_OUT } from "@/lib/motion";
 import { IconChevronRight } from "@/components/icons";
 import { templates } from "@/lib/templates";
 
 const AUTOPLAY_MS = 4500;
+
+/**
+ * Hand-sequenced entrance delays (seconds) for the hero's initial reveal —
+ * eyebrow → heading → paragraph → buttons → mockup, each starting shortly
+ * after the last. Finishes in well under 1.1s total (last element starts at
+ * 0.32s + ~0.55s duration ≈ 0.87s) so the page never feels like it's making
+ * the visitor wait to read anything.
+ */
+const HERO_DELAYS = { eyebrow: 0, heading: 0.08, paragraph: 0.16, buttons: 0.24, mockup: 0.32 };
 
 /**
  * Full-bleed hero: dark, edge-to-edge section with the headline/CTA up top
@@ -46,23 +58,29 @@ export function HeroCarousel() {
     >
       <Container className="flex flex-col items-center gap-12 text-center">
         <div className="flex flex-col items-center">
-          <span className="rounded-full border border-ink-700 px-3 py-1 text-xs font-medium text-ink-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.04)]">
-            Web Design &amp; Development for Local Businesses
-          </span>
-          <h1 className="mt-5 max-w-3xl text-balance text-white">Websites That Help Your Business Grow.</h1>
-          <p className="mt-4 max-w-lg text-lg text-ink-300">
-            We design and build modern, fast, and professional websites for businesses that want to
-            stand out online and turn visitors into customers.
-          </p>
+          <FadeUp immediate delay={HERO_DELAYS.eyebrow}>
+            <span className="rounded-full border border-ink-700 px-3 py-1 text-xs font-medium text-ink-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.04)]">
+              Web Design for Vancouver Small Businesses
+            </span>
+          </FadeUp>
+          <FadeUp immediate delay={HERO_DELAYS.heading} className="mt-5">
+            <h1 className="max-w-3xl text-balance text-white">A Website That Turns Visitors Into Customers.</h1>
+          </FadeUp>
+          <FadeUp immediate delay={HERO_DELAYS.paragraph} className="mt-4">
+            <p className="max-w-lg text-lg text-ink-300">
+              We build fast, professional websites for small businesses — so you look credible the moment
+              someone finds you, and easy to reach when they&apos;re ready to buy.
+            </p>
+          </FadeUp>
         </div>
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <FadeUp immediate delay={HERO_DELAYS.buttons} className="flex flex-col gap-3 sm:flex-row">
           <Button
             href="/contact"
             size="lg"
             gaEvent="cta_click"
-            gaEventParams={{ cta_label: "Get Started", cta_location: "hero" }}
+            gaEventParams={{ cta_label: "Get Your Quote", cta_location: "hero" }}
           >
-            Get Started
+            Get Your Quote
           </Button>
           <Button
             href="/templates"
@@ -70,12 +88,18 @@ export function HeroCarousel() {
             size="lg"
             className="border-ink-600 text-white hover:border-white"
           >
-            View Templates
+            See Example Websites
           </Button>
-        </div>
+        </FadeUp>
 
+        <motion.div
+          className="w-full max-w-3xl"
+          initial={{ opacity: 0, y: 20, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: DURATION.slow, ease: EASE_OUT, delay: HERO_DELAYS.mockup }}
+        >
         <div
-          className="relative w-full max-w-3xl"
+          className="relative w-full"
           role="region"
           aria-roledescription="carousel"
           aria-label="Example website designs"
@@ -141,8 +165,9 @@ export function HeroCarousel() {
             <IconChevronRight className="h-4 w-4" />
           </button>
         </div>
+        </motion.div>
 
-        <div className="flex flex-col items-center gap-3">
+        <FadeUp immediate delay={HERO_DELAYS.mockup} className="flex flex-col items-center gap-3">
           <div className="flex gap-2">
             {templates.map((template, index) => (
               <button
@@ -160,7 +185,7 @@ export function HeroCarousel() {
           <span className="text-xs font-medium text-ink-400" aria-live="polite">
             {current.name} — {current.category}
           </span>
-        </div>
+        </FadeUp>
       </Container>
     </section>
   );

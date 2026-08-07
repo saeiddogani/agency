@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { MotionProvider } from "@/components/motion/MotionProvider";
 import { standaloneDemoSlugs } from "@/lib/templates";
 import { siteConfig } from "@/lib/site-config";
 import { services } from "@/lib/data";
@@ -63,7 +64,7 @@ export function SiteChrome({ children }: { children: ReactNode }) {
   }
 
   return (
-    <>
+    <MotionProvider>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
@@ -71,6 +72,6 @@ export function SiteChrome({ children }: { children: ReactNode }) {
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
-    </>
+    </MotionProvider>
   );
 }

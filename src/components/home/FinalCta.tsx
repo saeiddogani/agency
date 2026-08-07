@@ -10,8 +10,8 @@ interface FinalCtaProps {
 
 /** Shared closing CTA band used on the homepage and reused across other pages. */
 export function FinalCta({
-  heading = "Ready to Build a Better Website?",
-  text = "Let's create a website that makes your business look professional and helps you attract more customers.",
+  heading = "Ready to Turn More Visitors Into Customers?",
+  text = "Tell us about your business and we'll show you what's possible — no pressure, no obligation.",
   buttonLabel = "Start Your Project",
   buttonHref = "/contact",
 }: FinalCtaProps) {
